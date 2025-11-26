@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Japanese Reading – Big Story</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #050816;
+      --card: #111827;
+      --accent: #f97316;
+      --accent-soft: rgba(249, 115, 22, 0.08);
+      --text-main: #f9fafb;
+      --text-muted: #9ca3af;
+      --border-subtle: #1f2937;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+      background: radial-gradient(circle at top, #0f172a 0, #020617 60%);
+      color: var(--text-main);
+      display: flex;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 720px;
+    }
+
+    .card {
+      background: rgba(15, 23, 42, 0.9);
+      border-radius: 18px;
+      padding: 16px 16px 20px;
+      border: 1px solid var(--border-subtle);
+      box-shadow: 0 18px 45px rgba(15, 23, 42, 0.7);
+      backdrop-filter: blur(18px);
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      gap: 12px;
+    }
+
+    .title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .badge {
+      font-size: 0.7rem;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--accent-soft);
+      background: rgba(15, 23, 42, 0.9);
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      white-space: nowrap;
+    }
+
+    .subtitle {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+      line-height: 1.4;
+    }
+
+    .hint {
+      font-size: 0.8rem;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: var(--accent-soft);
+      border: 1px solid rgba(249, 115, 22, 0.25);
+      color: #fed7aa;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .hint span.icon {
+      font-size: 1rem;
+      margin-top: 1px;
+    }
+
+    .jp-block {
+      background: radial-gradient(circle at top left, #111827 0, #020617 70%);
+      border-radius: 14px;
+      padding: 12px;
+      border: 1px solid var(--border-subtle);
+      margin-bottom: 10px;
+    }
+
+    .jp-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    .jp-text {
+      font-size: 1.05rem;
+      line-height: 1.8;
+    }
+
+    .story-title {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .word {
+      padding: 1px 3px;
+      margin: 0 2px;
+      border-radius: 6px;
+      cursor: pointer;
+      position: relative;
+      transition: background 0.15s ease, box-shadow 0.15s ease,
+        transform 0.08s ease;
+      white-space: nowrap;
+    }
+
+    .word:hover {
+      background: rgba(249, 115, 22, 0.12);
+      box-shadow: 0 0 0 1px rgba(249, 115, 22, 0.35);
+      transform: translateY(-1px);
+    }
+
+    .word:active {
+      transform: translateY(0);
+      background: rgba(249, 115, 22, 0.18);
+    }
+
+    .particle {
+      opacity: 0.9;
+    }
+
+    /* Tooltip */
+    #tooltip {
+      position: absolute;
+      z-index: 9999;
+      pointer-events: none;
+      background: #020617;
+      border-radius: 10px;
+      padding: 8px 10px;
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      font-size: 0.8rem;
+      line-height: 1.4;
+      opacity: 0;
+      transform: scale(0.92);
+      transition: opacity 0.1s ease-out, transform 0.1s ease-out;
+      min-width: 130px;
+      max-width: 220px;
+      color: var(--text-main);
+    }
+
+    #tooltip.visible {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    #tooltip .row-label {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 2px;
+    }
+
+    #tooltip .row-value {
+      margin-bottom: 6px;
+    }
+
+    #tooltip .row-value:last-child {
+      margin-bottom: 0;
+    }
+
+    #tooltip .romaji {
+      color: #fee2e2;
+      font-weight: 600;
+    }
+
+    #tooltip .translation {
+      color: #bfdbfe;
+    }
+
+    footer {
+      margin-top: 10px;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    @media (min-width: 640px) {
+      .card {
+        padding: 18px 20px 22px;
+      }
+      .subtitle {
+        font-size: 0.82rem;
+      }
+      .jp-text {
+        font-size: 1.1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="card">
+      <header>
+        <div>
+          <div class="title">
+            <span>にほんごリーダー</span>
+          </div>
+          <div class="subtitle">
+            One big story. Tap a <strong>word</strong> to see
+            <strong>romaji</strong>, <strong>translation</strong>, and hear audio.
+          </div>
+        </div>
+        <div class="badge">Big Story</div>
+      </header>
+
+      <div class="hint">
+        <span class="icon">💡</span>
+        <div>
+          <div>Read slowly, line by line. Tap only the words you need.</div>
+          <div>Audio will play if this word has a generated sound file.</div>
+        </div>
+      </div>
+
+      <div class="story-title">あんなの いちにち 🌅🏫🏠</div>
+      <div class="jp-block">
+        <div class="jp-label">Japanese</div>
+        <div class="jp-text">
+
+          <span class="word" data-romaji="watashi" data-translation="I">わたし</span>
+          <span class="word particle" data-romaji="wa" data-translation="topic marker">は</span>
+          <span class="word" data-romaji="anna" data-translation="Anna">あんな</span>
+          <span class="word" data-romaji="desu" data-translation="am / is / are">です</span>。
+          <span class="word" data-romaji="nihon" data-translation="Japan">にほん</span>
+          <span class="word" data-romaji="no" data-translation="of / 's">の</span>
+          <span class="word" data-romaji="chiisana" data-translation="small">ちいさな</span>
+          <span class="word" data-romaji="machi" data-translation="town">まち</span>
+          <span class="word" data-romaji="ni" data-translation="in / at / to">に</span>
+          <span class="word" data-romaji="sundeimasu" data-translation="live">すんでいます</span>。
+          <br />
+
+          <span class="word" data-romaji="maiasa" data-translation="every morning">まいあさ</span>
+          <span class="word" data-romaji="watashi" data-translation="I">わたし</span>
+          <span class="word particle" data-romaji="wa" data-translation="topic marker">は</span>
+          <span class="word" data-romaji="hayaku" data-translation="early / quickly">はやく</span>
+          <span class="word" data-romaji="okite" data-translation="wake up">おきて</span>、
+          <span class="word" data-romaji="asagohan" data-translation="breakfast">あさごはん</span>
+          <span class="word" data-romaji="o" data-translation="object marker">を</span>
+          <span class="word" data-romaji="tabemasu" data-translation="eat">たべます</span>。
+          <br />
+
+          <span class="word" data-romaji="ocha" data-translation="tea">おちゃ</span>
+          <span class="word" data-romaji="o" data-translation="object marker">を</span>
+          <span class="word" data-romaji="nonde" data-translation="drink (and...)">のんで</span>、
+          <span class="word" data-romaji="gakkou" data-translation="school">がっこう</span>
+          <span class="word" data-romaji="e" data-translation="to">へ</span>
+          <span class="word" data-romaji="ikimasu" data-translation="go">いきます</span>。
+          <br />
+
+          <span class="word" data-romaji="gakkou" data-translation="school">がっこう</span>
+          <span class="word" data-romaji="de" data-translation="at / in">で</span>
+          <span class="word" data-romaji="tomodachi" data-translation="friend(s)">ともだち</span>
+          <span class="word" data-romaji="to" data-translation="with / and">と</span>
+          <span class="word" data-romaji="atte" data-translation="meet">あって</span>、
+          <span class="word" data-romaji="nihongo" data-translation="Japanese language">にほんご</span>
+          <span class="word" data-romaji="o" data-translation="object marker">を</span>
+          <span class="word" data-romaji="benkyoushimasu" data-translation="study">べんきょうします</span>。
+          <br />
+
+          <span class="word" data-romaji="hiru" data-translation="noon">ひる</span>
+          <span class="word" data-romaji="yasumi" data-translation="break / rest">やすみ</span>
+          <span class="word" data-romaji="ni" data-translation="at / in">に</span>
+          <span class="word" data-romaji="tomodachi" data-translation="friend(s)">ともだち</span>
+          <span class="word" data-romaji="to" data-translation="with / and">と</span>
+          <span class="word" data-romaji="kouen" data-translation="park">こうえん</span>
+          <span class="word" data-romaji="e" data-translation="to">へ</span>
+          <span class="word" data-romaji="ikimasu" data-translation="go">いきます</span>。
+          <br />
+
+          <span class="word" data-romaji="midori" data-translation="green">みどり</span>
+          <span class="word" data-romaji="no" data-translation="of / 's">の</span>
+          <span class="word" data-romaji="ki" data-translation="tree">き</span>
+          <span class="word" data-romaji="o" data-translation="object marker">を</span>
+          <span class="word" data-romaji="mite" data-translation="look at / watch">みて</span>、
+          <span class="word" data-romaji="kawa" data-translation="river">かわ</span>
+          <span class="word" data-romaji="no" data-translation="of / 's">の</span>
+          <span class="word" data-romaji="chikaku" data-translation="near / close">ちかく</span>
+          <span class="word" data-romaji="de" data-translation="at / in">で</span>
+          <span class="word" data-romaji="obentou" data-translation="bento lunch">おべんとう</span>
+          <span class="word" data-romaji="o" data-translation="object marker">を</span>
+          <span class="word" data-romaji="tabemasu" data-translation="eat">たべます</span>。
+          <br />
+
+          <span class="word" data-romaji="inu" data-translation="dog">いぬ</span>
+          <span class="word" data-romaji="wa" data-translation="topic marker">は</span>
+          <span class="word" data-romaji="soko" data-translation="there">そこ</span>
+          <span class="word" data-romaji="de" data-translation="at / in">で</span>
+          <span class="word" data-romaji="asobimasu" data-translation="play">あそびます</span>。
+          <span class="word" data-romaji="kodomotachi" data-translation="children">こどもたち</span>
+          <span class="word" data-romaji="wa" data-translation="topic marker">は</span>
+          <span class="word" data-romaji="takusan" data-translation="a lot / many">たくさん</span>
+          <span class="word" data-romaji="waraimasu" data-translation="laugh">わらいます</span>。
+          <br />
+
+          <span class="word" data-romaji="yuugata" data-translation="evening">ゆうがた</span>、
+          <span class="word" data-romaji="watashi" data-translation="I">わたし</span>
+          <span class="word" data-romaji="wa" data-translation="topic marker">は</span>
+          <span class="word" data-romaji="uchi" data-translation="home / house">うち</span>
+          <span class="word" data-romaji="ni" data-translation="to / at">に</span>
+          <span class="word" data-romaji="kaerimasu" data-translation="return / go back">かえります</span>。
+          <br />
+
+          <span class="word" data-romaji="kazoku" data-translation="family">かぞく</span>
+          <span class="word" data-romaji="to" data-translation="with / and">と</span>
+          <span class="word" data-romaji="bangohan" data-translation="dinner">ばんごはん</span>
+          <span class="word" data-romaji="o" data-translation="object marker">を</span>
+          <span class="word" data-romaji="tabete" data-translation="eat (and...)">たべて</span>、
+          <span class="word" data-romaji="eiga" data-translation="movie">えいが</span>
+          <span class="word" data-romaji="o" data-translation="object marker">を</span>
+          <span class="word" data-romaji="mimasu" data-translation="watch / see">みます</span>。
+          <br />
+
+          <span class="word" data-romaji="yoru" data-translation="night">よる</span>、
+          <span class="word" data-romaji="watashi" data-translation="I">わたし</span>
+          <span class="word" data-romaji="wa" data-translation="topic marker">は</span>
+          <span class="word" data-romaji="hon" data-translation="book">ほん</span>
+          <span class="word" data-romaji="o" data-translation="object marker">を</span>
+          <span class="word" data-romaji="yomimasu" data-translation="read">よみます</span>。
+          <span class="word" data-romaji="yukkuri" data-translation="slowly / relax">ゆっくり</span>
+          <span class="word" data-romaji="ocha" data-translation="tea">おちゃ</span>
+          <span class="word" data-romaji="o" data-translation="object marker">を</span>
+          <span class="word" data-romaji="nonde" data-translation="drink (and...)">のんで</span>、
+          <span class="word" data-romaji="nemasu" data-translation="sleep / go to bed">ねます</span>。
+        </div>
+      </div>
+
+      <footer>
+        Save as <code>jp-big-story.html</code> and open in your browser. Works offline
+        (audio files must be in the <code>audio/</code> folder).
+      </footer>
+    </div>
+  </div>
+
+  <div id="tooltip" aria-hidden="true">
+    <div class="row-label">Romaji</div>
+    <div class="row-value romaji"></div>
+    <div class="row-label">Translation</div>
+    <div class="row-value translation"></div>
+  </div>
+
+  <!-- Single audio player (we'll change src in JS) -->
+  <audio id="word-audio"></audio>
+
+  <script>
+    (function () {
+      const tooltip = document.getElementById("tooltip");
+      const romajiEl = tooltip.querySelector(".romaji");
+      const translationEl = tooltip.querySelector(".translation");
+      const audioEl = document.getElementById("word-audio");
+      let hideTimer = null;
+
+      function showTooltip(target) {
+        const romaji = target.dataset.romaji || "";
+        const translation = target.dataset.translation || "";
+
+        romajiEl.textContent = romaji;
+        translationEl.textContent = translation;
+
+        const rect = target.getBoundingClientRect();
+        const scrollY =
+          window.scrollY || window.pageYOffset || document.documentElement.scrollTop;
+
+        const top = rect.top + scrollY - tooltip.offsetHeight - 8;
+        const left = Math.min(
+          Math.max(rect.left + rect.width / 2 - tooltip.offsetWidth / 2, 8),
+          window.innerWidth - tooltip.offsetWidth - 8
+        );
+
+        tooltip.style.top = `${top < 8 ? rect.bottom + scrollY + 8 : top}px`;
+        tooltip.style.left = `${left}px`;
+        tooltip.classList.add("visible");
+
+        if (hideTimer) clearTimeout(hideTimer);
+        hideTimer = setTimeout(() => {
+          tooltip.classList.remove("visible");
+        }, 2000);
+      }
+
+      function playAudio(target) {
+        const src = target.dataset.audio;
+        if (!src) return; // no audio yet for this word
+
+        if (!audioEl) return;
+        if (audioEl.src.endsWith(src)) {
+          audioEl.currentTime = 0;
+        } else {
+          audioEl.src = src;
+        }
+        audioEl.play().catch(() => {});
+      }
+
+      function init() {
+        const words = document.querySelectorAll(".word");
+        words.forEach((w) => {
+          w.addEventListener("click", () => {
+            showTooltip(w);
+            playAudio(w);
+          });
+        });
+
+        // Hide tooltip when tapping empty space
+        document.addEventListener("click", (e) => {
+          if (!e.target.classList.contains("word")) {
+            tooltip.classList.remove("visible");
+          }
+        });
+      }
+
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", init);
+      } else {
+        init();
+      }
+    })();
+  </script>
+</body>
+</html>
