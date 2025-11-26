@@ -220,7 +220,149 @@
         font-size: 1.1rem;
       }
     }
-  </style>
+  /* --- Mobile-first upgrades (bottom sheet popup) --- */
+html { -webkit-text-size-adjust: 100%; }
+* { -webkit-tap-highlight-color: transparent; }
+
+.app { padding-bottom: 140px; } /* room for the bottom sheet */
+
+.jp-text { font-size: clamp(1.05rem, 4.2vw, 1.16rem); line-height: 1.85; }
+
+.word{
+  padding: 4px 5px;
+  margin: 0 1px;
+  border-radius: 8px;
+  white-space: normal; /* avoid overflow on narrow screens */
+  user-select: none;
+}
+
+/* Only show hover effects on real hover devices (desktops) */
+@media (hover: hover) and (pointer: fine) {
+  .word:hover {
+    background: rgba(249, 115, 22, 0.12);
+    box-shadow: 0 0 0 1px rgba(249, 115, 22, 0.35);
+    transform: translateY(-1px);
+  }
+}
+
+.overlay{
+  position: fixed;
+  inset: 0;
+  background: rgba(2, 6, 23, 0.55);
+  backdrop-filter: blur(6px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 160ms ease;
+  z-index: 9998;
+}
+
+.overlay.visible{ opacity: 1; pointer-events: auto; }
+
+.sheet-wrap{
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+.sheet{
+  width: min(720px, 100%);
+  pointer-events: auto;
+  background: rgba(15, 23, 42, 0.98);
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  border-radius: 18px 18px 0 0;
+  box-shadow: 0 -18px 40px rgba(0,0,0,0.45);
+  transform: translateY(110%);
+  transition: transform 180ms ease;
+  padding: 10px 14px calc(14px + env(safe-area-inset-bottom));
+}
+
+.sheet.open{ transform: translateY(0); }
+
+.sheet .grab{
+  width: 44px;
+  height: 5px;
+  border-radius: 999px;
+  margin: 2px auto 10px;
+  background: rgba(148, 163, 184, 0.35);
+}
+
+.sheet-head{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.sheet-word{
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  font-size: 1.05rem;
+}
+
+.sheet-close{
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  background: rgba(2, 6, 23, 0.45);
+  color: var(--text-main);
+  border-radius: 12px;
+  padding: 8px 10px;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.sheet-body{
+  display: grid;
+  gap: 10px;
+}
+
+.sheet-row .row-label{
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin-bottom: 2px;
+}
+
+.sheet-row .row-value{
+  font-size: 0.98rem;
+  line-height: 1.35;
+  word-break: break-word;
+}
+
+.sheet-actions{
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-top: 4px;
+}
+
+.btn{
+  flex: 1;
+  border: 1px solid rgba(249, 115, 22, 0.45);
+  background: rgba(249, 115, 22, 0.14);
+  color: #fed7aa;
+  padding: 12px 12px;
+  border-radius: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn:active{ transform: translateY(1px); }
+
+.note{
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}
+</style>
 </head>
 <body>
 <div class="app">
@@ -351,85 +493,154 @@
       </footer>
 </div>
 </div>
-<div aria-hidden="true" id="tooltip">
-<div class="row-label">Romaji</div>
-<div class="row-value romaji"></div>
-<div class="row-label">Translation</div>
-<div class="row-value translation"></div>
+<div id="overlay" class="overlay" hidden></div>
+
+<div class="sheet-wrap" aria-hidden="true">
+  <div id="sheet" class="sheet" role="dialog" aria-modal="true" aria-label="Word info" hidden>
+    <div class="grab" aria-hidden="true"></div>
+    <div class="sheet-head">
+      <div class="sheet-word" id="sheet-word">—</div>
+      <button class="sheet-close" id="sheet-close" aria-label="Close">✕</button>
+    </div>
+
+    <div class="sheet-body">
+      <div class="sheet-row">
+        <div class="row-label">Romaji</div>
+        <div class="row-value" id="sheet-romaji">—</div>
+      </div>
+
+      <div class="sheet-row">
+        <div class="row-label">Translation</div>
+        <div class="row-value" id="sheet-translation">—</div>
+      </div>
+
+      <div class="sheet-actions">
+        <button class="btn" id="sheet-play" type="button">▶ Play audio</button>
+      </div>
+      <div class="note" id="sheet-note">Tap another word to update.</div>
+    </div>
+  </div>
 </div>
-<!-- Single audio player (we'll change src in JS) -->
+
+<!-- Single audio player (we'll change src in JS) --> (we'll change src in JS) -->
 <audio id="word-audio"></audio>
 <script>
-    (function () {
-      const tooltip = document.getElementById("tooltip");
-      const romajiEl = tooltip.querySelector(".romaji");
-      const translationEl = tooltip.querySelector(".translation");
-      const audioEl = document.getElementById("word-audio");
-      let hideTimer = null;
+(function () {
+  const audioEl = document.getElementById("word-audio");
+  const overlay = document.getElementById("overlay");
+  const sheet = document.getElementById("sheet");
+  const closeBtn = document.getElementById("sheet-close");
+  const playBtn = document.getElementById("sheet-play");
+  const wordEl = document.getElementById("sheet-word");
+  const romajiEl = document.getElementById("sheet-romaji");
+  const translationEl = document.getElementById("sheet-translation");
+  const noteEl = document.getElementById("sheet-note");
 
-      function showTooltip(target) {
-        const romaji = target.dataset.romaji || "";
-        const translation = target.dataset.translation || "";
+  let activeWord = null;
+  let prevOverflowBody = "";
+  let prevOverflowHtml = "";
 
-        romajiEl.textContent = romaji;
-        translationEl.textContent = translation;
+  function lockScroll(lock) {
+    if (lock) {
+      prevOverflowBody = document.body.style.overflow;
+      prevOverflowHtml = document.documentElement.style.overflow;
+      document.body.style.overflow = "hidden";
+      document.documentElement.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = prevOverflowBody;
+      document.documentElement.style.overflow = prevOverflowHtml;
+    }
+  }
 
-        const rect = target.getBoundingClientRect();
-        const scrollY =
-          window.scrollY || window.pageYOffset || document.documentElement.scrollTop;
+  function openSheet(target) {
+    activeWord = target;
 
-        const top = rect.top + scrollY - tooltip.offsetHeight - 8;
-        const left = Math.min(
-          Math.max(rect.left + rect.width / 2 - tooltip.offsetWidth / 2, 8),
-          window.innerWidth - tooltip.offsetWidth - 8
-        );
+    // highlight active word
+    document.querySelectorAll(".word.active").forEach((n) => n.classList.remove("active"));
+    target.classList.add("active");
 
-        tooltip.style.top = `${top < 8 ? rect.bottom + scrollY + 8 : top}px`;
-        tooltip.style.left = `${left}px`;
-        tooltip.classList.add("visible");
+    wordEl.textContent = target.textContent.trim() || "—";
+    romajiEl.textContent = target.dataset.romaji || "—";
+    translationEl.textContent = target.dataset.translation || "—";
 
-        if (hideTimer) clearTimeout(hideTimer);
-        hideTimer = setTimeout(() => {
-          tooltip.classList.remove("visible");
-        }, 2000);
-      }
+    // show UI
+    overlay.hidden = false;
+    sheet.hidden = false;
+    requestAnimationFrame(() => {
+      overlay.classList.add("visible");
+      sheet.classList.add("open");
+    });
 
-      function playAudio(target) {
-        const src = target.dataset.audio;
-        if (!src) return; // no audio yet for this word
+    lockScroll(true);
 
-        if (!audioEl) return;
-        if (audioEl.src.endsWith(src)) {
-          audioEl.currentTime = 0;
-        } else {
-          audioEl.src = src;
-        }
-        audioEl.play().catch(() => {});
-      }
+    // auto-play (if available)
+    playAudio(target, true);
+  }
 
-      function init() {
-        const words = document.querySelectorAll(".word");
-        words.forEach((w) => {
-          w.addEventListener("click", () => {
-            showTooltip(w);
-            playAudio(w);
-          });
-        });
+  function closeSheet() {
+    overlay.classList.remove("visible");
+    sheet.classList.remove("open");
+    lockScroll(false);
 
-        // Hide tooltip when tapping empty space
-        document.addEventListener("click", (e) => {
-          if (!e.target.classList.contains("word")) {
-            tooltip.classList.remove("visible");
-          }
-        });
-      }
+    setTimeout(() => {
+      overlay.hidden = true;
+      sheet.hidden = true;
+      document.querySelectorAll(".word.active").forEach((n) => n.classList.remove("active"));
+      activeWord = null;
+    }, 180);
+  }
 
-      if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", init);
-      } else {
-        init();
-      }
-    })();
-  </script>
+  function playAudio(target, silentIfMissing) {
+    const src = target?.dataset?.audio;
+    if (!src) {
+      noteEl.textContent = silentIfMissing ? "No audio for this word yet." : "No audio for this word yet.";
+      return;
+    }
+
+    noteEl.textContent = "Playing…";
+
+    if (audioEl.src.endsWith(src)) {
+      audioEl.currentTime = 0;
+    } else {
+      audioEl.src = src;
+      audioEl.load();
+    }
+
+    audioEl.play().then(() => {
+      // ok
+    }).catch(() => {
+      noteEl.textContent = "Audio blocked by browser. Tap Play again.";
+    });
+  }
+
+  function init() {
+    document.querySelectorAll(".word").forEach((w) => {
+      w.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        openSheet(w);
+      }, { passive: false });
+    });
+
+    overlay.addEventListener("click", () => closeSheet());
+    closeBtn.addEventListener("click", () => closeSheet());
+    playBtn.addEventListener("click", () => activeWord && playAudio(activeWord, false));
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && !sheet.hidden) closeSheet();
+    });
+
+    audioEl.addEventListener("ended", () => {
+      if (!sheet.hidden) noteEl.textContent = "Done ✅";
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
+})();
+</script>
 </body>
 </html>
