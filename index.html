@@ -1,60 +1,315 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Japanese Reader</title>
+<!doctype html>
+<html data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Japanese Reader</title>
+  
 <style>
-:root{--accent:#f97316;--muted:#9ca3af;--border:#1f2937;}
-body{margin:0;font-family:system-ui,-apple-system,Segoe UI,sans-serif;background:radial-gradient(circle at top,#0f172a 0,#020617 60%);color:#f9fafb;display:flex;justify-content:center;padding:16px;}
-.wrap{width:100%;max-width:900px;}
-.card{background:rgba(15,23,42,.9);border:1px solid var(--border);border-radius:18px;padding:16px;box-shadow:0 18px 45px rgba(15,23,42,.7);backdrop-filter:blur(18px);}
-a{color:#fed7aa;text-decoration:none}
-.nav{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0;}
-.pill{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;background:rgba(15,23,42,.9);border:1px solid var(--border);}
-.title{font-weight:800;letter-spacing:.04em;text-transform:uppercase}
-.subtitle{color:var(--muted);font-size:.85rem;margin-top:6px}
-.story{margin-top:12px;background:radial-gradient(circle at top left,#111827 0,#020617 70%);border:1px solid var(--border);border-radius:14px;padding:12px}
-.word{padding:1px 3px;margin:0 2px;border-radius:6px;cursor:pointer;white-space:nowrap;transition:.12s}
-.word:hover{background:rgba(249,115,22,.12);box-shadow:0 0 0 1px rgba(249,115,22,.35);transform:translateY(-1px)}
+/* ===== Theme + font scale ===== */
+:root{
+  --font-scale: 1;
+
+  /* Dark */
+  --bg0:#020617;
+  --bg1:#0b1224;
+  --card: rgba(15, 23, 42, .88);
+  --text:#f9fafb;
+  --muted:#a3aab8;
+  --border: rgba(148,163,184,.18);
+  --shadow: 0 18px 55px rgba(0,0,0,.42);
+  --chip: rgba(2,6,23,.55);
+  --chip2: rgba(2,6,23,.35);
+  --chipBorder: rgba(148,163,184,.18);
+  --accent:#f97316;
+}
+
+:root[data-theme="light"]{
+  --bg0:#f8fafc;
+  --bg1:#e2e8f0;
+  --card: rgba(255,255,255,.86);
+  --text:#0b1220;
+  --muted:#475569;
+  --border: rgba(15,23,42,.16);
+  --shadow: 0 18px 55px rgba(15,23,42,.12);
+  --chip: rgba(255,255,255,.8);
+  --chip2: rgba(255,255,255,.55);
+  --chipBorder: rgba(15,23,42,.14);
+  --accent:#ea580c;
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  background: radial-gradient(1200px 800px at 20% 0%, var(--bg1), var(--bg0));
+  color: var(--text);
+  font-size: calc(16px * var(--font-scale));
+  line-height: 1.45;
+  padding: max(12px, env(safe-area-inset-top)) 14px 22px;
+  display:flex;
+  justify-content:center;
+}
+
+.wrap{width:100%; max-width: 980px;}
+.card{
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(18px);
+  padding: clamp(12px, 2vw, 18px);
+}
+
+.header{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+  flex-wrap:wrap;
+}
+
+.brand{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  min-width: 220px;
+}
+.title{
+  font-weight: 900;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  font-size: 1.05rem;
+}
+.subtitle{
+  color: var(--muted);
+  font-size: .92rem;
+  max-width: 64ch;
+}
+
+.actions{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  align-items:center;
+  justify-content:flex-end;
+}
+
+.btn{
+  min-height: 44px; /* good for phones */
+  padding: 10px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--chipBorder);
+  background: var(--chip);
+  color: var(--text);
+  font-weight: 900;
+  cursor: pointer;
+  user-select:none;
+  text-decoration:none;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+}
+.btn:active{transform: translateY(1px)}
+.btnAccent{border-color: rgba(249,115,22,.35); box-shadow: 0 0 0 3px rgba(249,115,22,.12) inset;}
+.btnIcon{width: 44px; padding: 10px 0; text-align:center;}
+
+.controls{
+  margin-top: 12px;
+  display:grid;
+  grid-template-columns: 140px 170px 1fr;
+  gap: 10px;
+}
+@media (max-width: 720px){
+  .controls{grid-template-columns: 1fr 1fr;}
+}
+@media (max-width: 520px){
+  .controls{grid-template-columns: 1fr;}
+}
+
+.field{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid var(--chipBorder);
+  background: var(--chip2);
+}
+.label{
+  color: var(--muted);
+  font-size: .85rem;
+  font-weight: 800;
+  white-space:nowrap;
+}
+select,input{
+  width:100%;
+  border:0;
+  outline:none;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+}
+input::placeholder{color: rgba(163,170,184,.85);}
+
+.metaRow{
+  margin-top: 12px;
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  flex-wrap:wrap;
+  color: var(--muted);
+  font-size: .9rem;
+}
+
+.grid{
+  margin-top: 14px;
+  display:grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.storyItem{
+  display:block;
+  text-decoration:none;
+  color: inherit;
+  background: linear-gradient(180deg, rgba(249,115,22,.10), rgba(249,115,22,0));
+  border: 1px solid rgba(249,115,22,.18);
+  border-radius: 18px;
+  padding: 14px;
+  transition: transform .12s ease, border-color .12s ease, background .12s ease;
+  position:relative;
+  overflow:hidden;
+}
+.storyItem:hover{
+  transform: translateY(-2px);
+  border-color: rgba(249,115,22,.38);
+}
+.storyTop{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:10px;
+}
+.storyTitle{
+  font-weight: 900;
+  letter-spacing: .01em;
+  font-size: 1.02rem;
+  line-height: 1.2;
+}
+.badge{
+  flex: 0 0 auto;
+  border: 1px solid var(--chipBorder);
+  background: var(--chip);
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-weight: 900;
+  color: var(--muted);
+  font-size: .85rem;
+}
+.storyHint{
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: .9rem;
+}
+
+.empty{
+  margin-top: 14px;
+  padding: 14px;
+  border-radius: 16px;
+  border: 1px dashed var(--border);
+  color: var(--muted);
+}
+
+/* ===== Story page interactive words ===== */
+.storyBox{
+  margin-top:12px;
+  background: var(--chip2);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:12px;
+  font-size: 1.05em;
+}
+
+.word{
+  padding:1px 3px;
+  margin:0 2px;
+  border-radius:8px;
+  cursor:pointer;
+  white-space:nowrap;
+  transition:.12s;
+}
+.word:hover{
+  background:rgba(249,115,22,.12);
+  box-shadow:0 0 0 1px rgba(249,115,22,.35);
+  transform:translateY(-1px);
+}
 .punct{opacity:.9}
-#tip{position:absolute;z-index:9999;pointer-events:none;background:#020617;border:1px solid rgba(148,163,184,.6);border-radius:10px;padding:8px 10px;box-shadow:0 12px 30px rgba(15,23,42,.9);opacity:0;transform:scale(.92);transition:.1s;min-width:150px;max-width:250px}
+
+#tip{
+  position:absolute;
+  z-index:9999;
+  pointer-events:none;
+  background: var(--bg0);
+  border:1px solid rgba(148,163,184,.4);
+  border-radius:12px;
+  padding:8px 10px;
+  box-shadow:0 12px 30px rgba(0,0,0,.35);
+  opacity:0;
+  transform:scale(.92);
+  transition:.1s;
+  min-width:150px;
+  max-width:260px
+}
 #tip.v{opacity:1;transform:scale(1)}
-.lbl{font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.12em;margin-bottom:2px}
+.lbl{
+  font-size:.72rem;
+  color:var(--muted);
+  text-transform:uppercase;
+  letter-spacing:.12em;
+  margin-bottom:2px
+}
 .val{margin-bottom:6px}
 .val:last-child{margin-bottom:0}
-.rom{color:#fee2e2;font-weight:700}
-.tr{color:#bfdbfe}
-.em{font-size:1.1rem}
-.ctrlRow{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;margin-bottom:10px}
-.ctrl{display:inline-flex;align-items:center;gap:6px}
-.ctrl select,.ctrl input{
-  padding:6px 10px;border-radius:999px;border:1px solid #374151;
-  background:#0b1020;color:#fff;outline:none;
-}
-.ctrl input{min-width:220px}
+.rom{font-weight:900}
+.tr{opacity:.95}
+.em{font-size:1.15rem}
 </style>
+
 </head>
-<body><div class="wrap"><div class="card">
-  <div class="title">にほんごリーダー</div>
-  <div class="subtitle">Menu – filter by level, search by title. Open a story and tap words for emoji + translation + romaji + audio.</div>
-  
-<div class="ctrlRow">
-  <div class="pill ctrl">
-    Max Lv:
+<body>
+  <div class="wrap">
+    <div class="card">
+
+      <div class="header">
+        <div class="brand">
+          <div class="title">にほんごリーダー</div>
+          <div class="subtitle">Choose a story. Filter by level, search by title. (Theme + text size is remembered.)</div>
+        </div>
+        <div class="actions" role="group" aria-label="Reading preferences">
+          
+<button class="btn btnIcon" id="fsDown" type="button" title="Smaller text">A−</button>
+<button class="btn btnIcon" id="fsUp" type="button" title="Bigger text">A+</button>
+<button class="btn" id="fsReset" type="button" title="Reset text size">Reset</button>
+<button class="btn btnAccent" id="themeToggle" type="button" title="Toggle theme">🌙 / ☀️</button>
+
+        </div>
+      </div>
+
+      
+<div class="controls" aria-label="Filters">
+  <div class="field">
+    <div class="label">Max Lv</div>
     <select id="maxLv">
-      <option value="10">10</option>
-      <option value="9">9</option>
-      <option value="8">8</option>
-      <option value="7">7</option>
-      <option value="6">6</option>
-      <option value="5">5</option>
-      <option value="4">4</option>
-      <option value="3">3</option>
-      <option value="2">2</option>
-      <option value="1">1</option>
-      <option value="0">0</option>
+      <option value="10">10</option><option value="9">9</option><option value="8">8</option><option value="7">7</option>
+      <option value="6">6</option><option value="5">5</option><option value="4">4</option><option value="3">3</option>
+      <option value="2">2</option><option value="1">1</option><option value="0">0</option>
     </select>
   </div>
 
-  <div class="pill ctrl">
-    Sort:
+  <div class="field">
+    <div class="label">Sort</div>
     <select id="sortMode">
       <option value="easy">easy → hard</option>
       <option value="hard">hard → easy</option>
@@ -62,21 +317,70 @@ a{color:#fed7aa;text-decoration:none}
     </select>
   </div>
 
-  <div class="pill ctrl">
-    Search:
-    <input id="q" type="text" placeholder="type title…">
+  <div class="field">
+    <div class="label">Search</div>
+    <input id="q" type="text" placeholder="type title…" autocomplete="off">
   </div>
 </div>
 
+<div class="metaRow">
+  <div id="countText"></div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap">
+    <button class="btn" type="button" id="clearFilters">Clear</button>
+  </div>
+</div>
+
+
+      <div class="grid" id="storyGrid">
+        <a class="storyItem" data-level="1" data-title="はるの いちにち" href="stories/story.html" aria-label="はるの いちにち">  <div class="storyTop">    <div class="storyTitle">📖 はるの いちにち</div>    <div class="badge">Lv 1</div>  </div>  <div class="storyHint">Tap to open</div></a><a class="storyItem" data-level="1" data-title="Anna1" href="stories/anna1.html" aria-label="Anna1">  <div class="storyTop">    <div class="storyTitle">📖 Anna1</div>    <div class="badge">Lv 1</div>  </div>  <div class="storyHint">Tap to open</div></a><a class="storyItem" data-level="1" data-title="あさの さんぽ" href="stories/story-2.html" aria-label="あさの さんぽ">  <div class="storyTop">    <div class="storyTitle">📖 あさの さんぽ</div>    <div class="badge">Lv 1</div>  </div>  <div class="storyHint">Tap to open</div></a><a class="storyItem" data-level="1" data-title="たいとる：ねこと いぬ 🐱🐶" href="stories/story-3.html" aria-label="たいとる：ねこと いぬ 🐱🐶">  <div class="storyTop">    <div class="storyTitle">📖 たいとる：ねこと いぬ 🐱🐶</div>    <div class="badge">Lv 1</div>  </div>  <div class="storyHint">Tap to open</div></a><a class="storyItem" data-level="1" data-title="たいとる：あめの ひ" href="stories/story-4.html" aria-label="たいとる：あめの ひ">  <div class="storyTop">    <div class="storyTitle">📖 たいとる：あめの ひ</div>    <div class="badge">Lv 1</div>  </div>  <div class="storyHint">Tap to open</div></a>
+      </div>
+
+    </div>
+  </div>
+
+  
 <script>
 (() => {
-  const nav = document.getElementById("storyNav");
+  const root = document.documentElement;
+  const clamp = (v,a,b)=>Math.max(a,Math.min(b,v));
+
+  const getTheme = () => localStorage.getItem("jr_theme") || "dark";
+  const setTheme = (t) => { root.dataset.theme = t; localStorage.setItem("jr_theme", t); };
+
+  const getScale = () => Number(localStorage.getItem("jr_fontScale") || "1");
+  const setScale = (s) => {
+    s = clamp(s, 0.85, 1.6);
+    root.style.setProperty("--font-scale", s);
+    localStorage.setItem("jr_fontScale", String(s));
+  };
+
+  setTheme(getTheme());
+  setScale(getScale());
+
+  const fsDown = document.getElementById("fsDown");
+  const fsUp = document.getElementById("fsUp");
+  const fsReset = document.getElementById("fsReset");
+  const themeToggle = document.getElementById("themeToggle");
+
+  if (fsDown) fsDown.onclick = () => setScale(getScale() - 0.1);
+  if (fsUp) fsUp.onclick   = () => setScale(getScale() + 0.1);
+  if (fsReset) fsReset.onclick = () => setScale(1);
+  if (themeToggle) themeToggle.onclick = () => setTheme(getTheme()==="dark" ? "light" : "dark");
+})();
+</script>
+
+  
+<script>
+(() => {
+  const grid = document.getElementById("storyGrid");
   const items = Array.from(document.querySelectorAll(".storyItem"));
   const maxLv = document.getElementById("maxLv");
   const sortMode = document.getElementById("sortMode");
   const q = document.getElementById("q");
+  const countText = document.getElementById("countText");
+  const clearBtn = document.getElementById("clearFilters");
 
-  // restore saved
+  // restore saved filters
   maxLv.value = localStorage.getItem("jr_maxLv") || "10";
   sortMode.value = localStorage.getItem("jr_sort") || "easy";
   q.value = localStorage.getItem("jr_q") || "";
@@ -104,9 +408,14 @@ a{color:#fed7aa;text-decoration:none}
       return la - lb || ta.localeCompare(tb); // easy
     });
 
-    // rebuild list
-    nav.innerHTML = "";
-    visible.forEach(el => nav.appendChild(el));
+    grid.innerHTML = "";
+    if (visible.length === 0){
+      grid.innerHTML = '<div class="empty">No stories match your filters.</div>';
+    } else {
+      visible.forEach(el => grid.appendChild(el));
+    }
+
+    countText.textContent = `Showing ${visible.length} / ${items.length}`;
 
     localStorage.setItem("jr_maxLv", maxLv.value);
     localStorage.setItem("jr_sort", sortMode.value);
@@ -117,9 +426,16 @@ a{color:#fed7aa;text-decoration:none}
   sortMode.addEventListener("change", apply);
   q.addEventListener("input", apply);
 
+  clearBtn.onclick = () => {
+    maxLv.value = "10";
+    sortMode.value = "easy";
+    q.value = "";
+    apply();
+  };
+
   apply();
 })();
 </script>
 
-  <div class="nav" id="storyNav"><div class="pill storyItem" data-level="1" data-title="はるの いちにち"><a href="stories/story.html">📖 はるの いちにち</a> <span style="color:#9ca3af;font-size:.85rem">Lv 1</span></div><div class="pill storyItem" data-level="1" data-title="Anna1"><a href="stories/anna1.html">📖 Anna1</a> <span style="color:#9ca3af;font-size:.85rem">Lv 1</span></div><div class="pill storyItem" data-level="1" data-title="あさの さんぽ"><a href="stories/story-2.html">📖 あさの さんぽ</a> <span style="color:#9ca3af;font-size:.85rem">Lv 1</span></div></div>
-</div></div></body></html>
+</body>
+</html>
