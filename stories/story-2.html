@@ -1,0 +1,89 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>あさの さんぽ</title>
+<style>
+:root{--accent:#f97316;--muted:#9ca3af;--border:#1f2937;}
+body{margin:0;font-family:system-ui,-apple-system,Segoe UI,sans-serif;background:radial-gradient(circle at top,#0f172a 0,#020617 60%);color:#f9fafb;display:flex;justify-content:center;padding:16px;}
+.wrap{width:100%;max-width:900px;}
+.card{background:rgba(15,23,42,.9);border:1px solid var(--border);border-radius:18px;padding:16px;box-shadow:0 18px 45px rgba(15,23,42,.7);backdrop-filter:blur(18px);}
+a{color:#fed7aa;text-decoration:none}
+.nav{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0;}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;background:rgba(15,23,42,.9);border:1px solid var(--border);}
+.title{font-weight:800;letter-spacing:.04em;text-transform:uppercase}
+.subtitle{color:var(--muted);font-size:.85rem;margin-top:6px}
+.story{margin-top:12px;background:radial-gradient(circle at top left,#111827 0,#020617 70%);border:1px solid var(--border);border-radius:14px;padding:12px}
+.word{padding:1px 3px;margin:0 2px;border-radius:6px;cursor:pointer;white-space:nowrap;transition:.12s}
+.word:hover{background:rgba(249,115,22,.12);box-shadow:0 0 0 1px rgba(249,115,22,.35);transform:translateY(-1px)}
+.punct{opacity:.9}
+#tip{position:absolute;z-index:9999;pointer-events:none;background:#020617;border:1px solid rgba(148,163,184,.6);border-radius:10px;padding:8px 10px;box-shadow:0 12px 30px rgba(15,23,42,.9);opacity:0;transform:scale(.92);transition:.1s;min-width:150px;max-width:250px}
+#tip.v{opacity:1;transform:scale(1)}
+.lbl{font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.12em;margin-bottom:2px}
+.val{margin-bottom:6px}
+.val:last-child{margin-bottom:0}
+.rom{color:#fee2e2;font-weight:700}
+.tr{color:#bfdbfe}
+.em{font-size:1.1rem}
+.ctrlRow{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;margin-bottom:10px}
+.ctrl{display:inline-flex;align-items:center;gap:6px}
+.ctrl select,.ctrl input{
+  padding:6px 10px;border-radius:999px;border:1px solid #374151;
+  background:#0b1020;color:#fff;outline:none;
+}
+.ctrl input{min-width:220px}
+</style>
+</head>
+<body><div class="wrap"><div class="card">
+  <div class="title">あさの さんぽ <span style="color:#9ca3af;font-size:.85rem">Lv 1</span></div>
+  <div class="subtitle">Tap a word → emoji + romaji + translation + audio.</div>
+  <div class="nav"><div class="pill"><a href="../index.html">← Back</a></div></div>
+  <div class="story"><span class="word" data-emoji="📅" data-romaji="kyoo" data-translation="today" data-audio="../audio/858a1996f848.mp3">きょう</span><span class="word" data-emoji="🔎" data-romaji="wa" data-translation="(topic marker)" data-audio="../audio/1fa0519cfd09_XyvwIQt.mp3">は</span><span class="word" data-emoji="👍" data-romaji="ii" data-translation="good" data-audio="../audio/46b255d3a847.mp3">いい</span><span class="word" data-emoji="☀️" data-romaji="tenki" data-translation="weather" data-audio="../audio/8171cbe9a4f1_KckyxXD.mp3">てんき</span><span class="word" data-emoji="✅" data-romaji="desu" data-translation="is / am / are (polite)" data-audio="../audio/b76f99438b35_qxIPzbz.mp3">です</span><span class="punct">。</span><br><span class="word" data-emoji="🙋" data-romaji="watashi" data-translation="I / me" data-audio="../audio/b8020da03ae5_0InoCZm.mp3">わたし</span><span class="word" data-emoji="🔎" data-romaji="wa" data-translation="(topic marker)" data-audio="../audio/1fa0519cfd09_XyvwIQt.mp3">は</span><span class="word" data-emoji="🌅" data-romaji="asa" data-translation="morning" data-audio="../audio/4dcc6bc4aacb.mp3">あさ</span><span class="word" data-emoji="⚡" data-romaji="hayaku" data-translation="early / fast" data-audio="../audio/38fab5862f72_wLcieba.mp3">はやく</span><span class="word" data-emoji="⏰" data-romaji="oki" data-translation="wake up (stem)" data-audio="../audio/79909eb3d7c2.mp3">おき</span><span class="word" data-emoji="🎩" data-romaji="masu" data-translation="(polite verb ending)" data-audio="../audio/9510b5e554e5_XDrkA3a.mp3">ます</span><span class="punct">。</span><br><span class="word" data-emoji="💧" data-romaji="mizu" data-translation="water" data-audio="../audio/1a3d0aa360f2_mmf9KgP.mp3">みず</span><span class="word" data-emoji="🎯" data-romaji="o" data-translation="(object marker)" data-audio="../audio/eba95ba0c666_Du23u3H.mp3">を</span><span class="word" data-emoji="🍵" data-romaji="nomi" data-translation="drink (stem)" data-audio="../audio/b82392da617f_NhA8AGl.mp3">のみ</span><span class="word" data-emoji="🎩" data-romaji="masu" data-translation="(polite verb ending)" data-audio="../audio/9510b5e554e5_XDrkA3a.mp3">ます</span><span class="punct">。</span><br><span class="word" data-emoji="👟" data-romaji="kutsu" data-translation="shoes" data-audio="../audio/412905de624a.mp3">くつ</span><span class="word" data-emoji="🎯" data-romaji="o" data-translation="(object marker)" data-audio="../audio/eba95ba0c666_Du23u3H.mp3">を</span><span class="word" data-emoji="✅" data-romaji="hai" data-translation="yes" data-audio="../audio/c92b4cda8bdf.mp3">はい</span><span class="word" data-emoji="✋" data-romaji="te" data-translation="hand" data-audio="../audio/e2d970611589_CeX74tr.mp3">て</span><span class="punct">、</span><span class="word" data-emoji="🌤️" data-romaji="soto" data-translation="outside" data-audio="../audio/a8f7560f87fb.mp3">そと</span><span class="word" data-emoji="➡️" data-romaji="e" data-translation="to (direction)" data-audio="../audio/72c746d609d4_IyWnn33.mp3">へ</span><span class="word" data-emoji="🚶‍➡️" data-romaji="iki" data-translation="go (stem)" data-audio="../audio/edb3cc27de99.mp3">いき</span><span class="word" data-emoji="🎩" data-romaji="masu" data-translation="(polite verb ending)" data-audio="../audio/9510b5e554e5_XDrkA3a.mp3">ます</span><span class="punct">。</span><br><span class="word" data-emoji="👉" data-romaji="koo" data-translation="like this / this way" data-audio="../audio/47a07bc48a04.mp3">こう</span><span class="word" data-emoji="🖼️" data-romaji="e" data-translation="picture / drawing" data-audio="../audio/a60311a2fc88.mp3">え</span><span class="word" data-emoji="➡️" data-romaji="nde" data-translation="and then / so (んで)" data-audio="../audio/47b9f44cbea5_I0qKbgk.mp3">んで</span><span class="word" data-emoji="🐶" data-romaji="inu" data-translation="dog" data-audio="../audio/7269c3d52902.mp3">いぬ</span><span class="word" data-emoji="🎯" data-romaji="ga" data-translation="(subject marker)" data-audio="../audio/a142816563b3.mp3">が</span><span class="word" data-emoji="🚶‍➡️" data-romaji="i" data-translation="go (stem)" data-audio="../audio/3c01c77f19cd.mp3">い</span><span class="word" data-emoji="🎩" data-romaji="masu" data-translation="(polite verb ending)" data-audio="../audio/9510b5e554e5_XDrkA3a.mp3">ます</span><span class="punct">。</span><br><span class="word" data-emoji="🐶" data-romaji="inu" data-translation="dog" data-audio="../audio/7269c3d52902.mp3">いぬ</span><span class="word" data-emoji="🔎" data-romaji="wa" data-translation="(topic marker)" data-audio="../audio/1fa0519cfd09_XyvwIQt.mp3">は</span><span class="word" data-emoji="💪" data-romaji="genki" data-translation="healthy / energetic" data-audio="../audio/8ae359757660.mp3">げんき</span><span class="word" data-emoji="🎯" data-romaji="ni" data-translation="to / in / at" data-audio="../audio/de3d1ecc94b2_B0nb3q4.mp3">に</span><span class="word" data-emoji="🏃" data-romaji="hashiri" data-translation="running" data-audio="../audio/668bf61eaf97.mp3">はしり</span><span class="word" data-emoji="🎩" data-romaji="masu" data-translation="(polite verb ending)" data-audio="../audio/9510b5e554e5_XDrkA3a.mp3">ます</span><span class="punct">。</span><br><span class="word" data-emoji="🙋" data-romaji="watashi" data-translation="I / me" data-audio="../audio/b8020da03ae5_0InoCZm.mp3">わたし</span><span class="word" data-emoji="🔎" data-romaji="wa" data-translation="(topic marker)" data-audio="../audio/1fa0519cfd09_XyvwIQt.mp3">は</span><span class="word" data-emoji="🐢" data-romaji="yukkuri" data-translation="slowly" data-audio="../audio/1b1282bd4bad_9pMO8gK.mp3">ゆっくり</span><span class="word" data-emoji="🚶" data-romaji="aruki" data-translation="walk (stem)" data-audio="../audio/74fd8a76010f.mp3">あるき</span><span class="word" data-emoji="🎩" data-romaji="masu" data-translation="(polite verb ending)" data-audio="../audio/9510b5e554e5_XDrkA3a.mp3">ます</span><span class="punct">。</span><br><span class="word" data-emoji="🏠" data-romaji="kaette" data-translation="go back / return" data-audio="../audio/9b49fca964ae.mp3">かえって</span><span class="punct">、</span><span class="word" data-emoji="🍳" data-romaji="asagohan" data-translation="breakfast" data-audio="../audio/4d59411a111e.mp3">あさごはん</span><span class="word" data-emoji="🎯" data-romaji="o" data-translation="(object marker)" data-audio="../audio/eba95ba0c666_Du23u3H.mp3">を</span><span class="word" data-emoji="🍽️" data-romaji="tabe" data-translation="eat (stem)" data-audio="../audio/c615f091b2e6_94J4yGr.mp3">たべ</span><span class="word" data-emoji="🎩" data-romaji="masu" data-translation="(polite verb ending)" data-audio="../audio/9510b5e554e5_XDrkA3a.mp3">ます</span><span class="punct">。</span><br></div>
+</div></div>
+
+<div id="tip" aria-hidden="true">
+  <div class="lbl">Emoji</div><div class="val em"></div>
+  <div class="lbl">Romaji</div><div class="val rom"></div>
+  <div class="lbl">Translation</div><div class="val tr"></div>
+</div>
+<audio id="aud"></audio>
+<script>
+(()=> {
+  const tip = document.getElementById('tip');
+  const em = tip.querySelector('.em');
+  const rom = tip.querySelector('.rom');
+  const tr = tip.querySelector('.tr');
+  const aud = document.getElementById('aud');
+  let t=null;
+
+  function show(el){
+    em.textContent = el.dataset.emoji || "—";
+    rom.textContent = el.dataset.romaji || "—";
+    tr.textContent = el.dataset.translation || "—";
+
+    const r = el.getBoundingClientRect();
+    const y = window.scrollY || document.documentElement.scrollTop;
+    const top = r.top + y - tip.offsetHeight - 8;
+    const left = Math.min(Math.max(r.left + r.width/2 - tip.offsetWidth/2, 8), window.innerWidth - tip.offsetWidth - 8);
+    tip.style.top = `${top < 8 ? r.bottom + y + 8 : top}px`;
+    tip.style.left = `${left}px`;
+    tip.classList.add('v');
+    clearTimeout(t);
+    t=setTimeout(()=>tip.classList.remove('v'), 2200);
+  }
+
+  function play(el){
+    const src = el.dataset.audio;
+    if(!src) return;
+    if(aud.src.endsWith(src)) aud.currentTime = 0;
+    else aud.src = src;
+    aud.play().catch(()=>{});
+  }
+
+  document.querySelectorAll('.word').forEach(w=>{
+    w.addEventListener('click', ()=>{ show(w); play(w); });
+  });
+  document.addEventListener('click', (e)=>{
+    if(!e.target.classList.contains('word')) tip.classList.remove('v');
+  });
+})();
+</script>
+
+</body></html>
