@@ -1,0 +1,31 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Japanese Reader</title>
+<style>
+:root{--accent:#f97316;--muted:#9ca3af;--border:#1f2937;}
+body{margin:0;font-family:system-ui,-apple-system,Segoe UI,sans-serif;background:radial-gradient(circle at top,#0f172a 0,#020617 60%);color:#f9fafb;display:flex;justify-content:center;padding:16px;}
+.wrap{width:100%;max-width:780px;}
+.card{background:rgba(15,23,42,.9);border:1px solid var(--border);border-radius:18px;padding:16px;box-shadow:0 18px 45px rgba(15,23,42,.7);backdrop-filter:blur(18px);}
+a{color:#fed7aa;text-decoration:none}
+.nav{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0;}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;background:rgba(15,23,42,.9);border:1px solid var(--border);}
+.title{font-weight:800;letter-spacing:.04em;text-transform:uppercase}
+.subtitle{color:var(--muted);font-size:.85rem;margin-top:6px}
+.story{margin-top:12px;background:radial-gradient(circle at top left,#111827 0,#020617 70%);border:1px solid var(--border);border-radius:14px;padding:12px}
+.word{padding:1px 3px;margin:0 2px;border-radius:6px;cursor:pointer;white-space:nowrap;transition:.12s}
+.word:hover{background:rgba(249,115,22,.12);box-shadow:0 0 0 1px rgba(249,115,22,.35);transform:translateY(-1px)}
+.punct{opacity:.9}
+#tip{position:absolute;z-index:9999;pointer-events:none;background:#020617;border:1px solid rgba(148,163,184,.6);border-radius:10px;padding:8px 10px;box-shadow:0 12px 30px rgba(15,23,42,.9);opacity:0;transform:scale(.92);transition:.1s;min-width:150px;max-width:250px}
+#tip.v{opacity:1;transform:scale(1)}
+.lbl{font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.12em;margin-bottom:2px}
+.val{margin-bottom:6px}
+.val:last-child{margin-bottom:0}
+.rom{color:#fee2e2;font-weight:700}
+.tr{color:#bfdbfe}
+.em{font-size:1.1rem}
+</style>
+</head>
+<body><div class="wrap"><div class="card">
+  <div class="title">にほんごリーダー</div>
+  <div class="subtitle">Menu – tap words for emoji + translation + romaji + audio.</div>
+  <div class="nav"><div class="pill"><a href="stories/.html">📖 はるの いちにち</a></div><div class="pill"><a href="stories/anna.html">📖 Anna</a></div><div class="pill"><a href="stories/story.html">📖 はるの いちにち</a></div><div class="pill"><a href="stories/anna1.html">📖 Anna1</a></div><div class="pill"><a href="stories/anna1-2.html">📖 Anna1</a></div></div>
+</div></div></body></html>
